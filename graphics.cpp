@@ -6,12 +6,12 @@
 #include <sys/timer.h>
 
 #include <cell/gcm.h>
+#include <cell/cell_fs.h>
 
 #include <sysutil/sysutil_sysparam.h>
 
 #include "graphics.h"
-
-#include <cell/cell_fs.h>
+#include "config.h"
 
 
 
@@ -706,7 +706,11 @@ void draw_list( t_menu_list *menu, int menu_size, int selected )
 			{
 			utf8_to_ansi(menu[i].title, ansi, 37);
 			ansi[37]=0;
-			sprintf(str, "%i) %s", i+1, ansi);
+#ifdef BM_SHOW_LIST_NUMBERS
+			snprintf(str, sizeof(str), "%i) %s", i+1, ansi);
+#else
+			strcpy(str, ansi);
+#endif
 			grey=(menu[i].title[0]=='_');
 			}
 		else

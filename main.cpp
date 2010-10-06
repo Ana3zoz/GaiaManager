@@ -37,7 +37,7 @@
 
 #include "syscall8.h"
 #include "graphics.h"
-
+#include "config.h"
 
 enum BmModes {
 		GAME = 0,
