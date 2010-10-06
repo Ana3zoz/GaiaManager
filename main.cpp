@@ -39,22 +39,27 @@
 #include "graphics.h"
 
 
+enum BmModes {
+		GAME = 0,
+		HOMEBREW = 1
+};
 
 
-char hdd_folder[64]="ASDFGHJKLMN"; // folder for games (deafult string is changed the first time it is loaded
-char hdd_folder_home[64]="OMAN46756"; // folder for homebrew
+static char hdd_folder[64]="ASDFGHJKLMN"; // folder for games (deafult string is changed the first time it is loaded
+static char hdd_folder_home[64]="OMAN46756"; // folder for homebrew
 
 #define MAX_LIST 512
 
-t_menu_list menu_list[MAX_LIST];
-int max_menu_list=0;
+static t_menu_list menu_list[MAX_LIST];
+static int max_menu_list=0;
 
 t_menu_list menu_homebrew_list[MAX_LIST];
-int max_menu_homebrew_list=0;
+static int max_menu_homebrew_list=0;
+static int *max_list=&max_menu_list;
 
-int mode_list=0;
+static enum BmModes mode_list=GAME;
 
-int game_sel=0;
+static int game_sel;
 
 using namespace cell::Gcm;
 
@@ -2012,7 +2017,7 @@ update_game_folder:
 	if(old_fi!=game_sel && game_sel>=0 && counter_png==0)
 		{
 			old_fi=game_sel;
-			if(mode_list==0)
+			if(mode_list==GAME)
 				sprintf(filename, "%s/PS3_GAME/ICON0.PNG", menu_list[game_sel].path);
 			else
 				sprintf(filename, "%s/ICON0.PNG", menu_homebrew_list[game_sel].path);
@@ -2032,10 +2037,7 @@ skip_find_device:
 			game_sel--;
 			if(game_sel<0)  
 				{
-				if(mode_list==0)
-					game_sel=max_menu_list-1;
-				else
-					game_sel=max_menu_homebrew_list-1;
+				game_sel=*max_list-1;
 				}
 		} else up_count++;
 	
@@ -2046,15 +2048,7 @@ skip_find_device:
 		if (down_count>15){
 			down_count=0;
 			game_sel++;
-			if(mode_list==0)
-				{
-				if(game_sel>=max_menu_list) game_sel=0;
-				}
-			else
-				{
-				if(game_sel>=max_menu_homebrew_list) game_sel=0;
-				}
-
+				if(game_sel>=*max_list) game_sel=0;
 		} else down_count++;
 			
 	} else down_count=16;
@@ -2071,16 +2065,8 @@ skip_find_device:
 			else
 			{
 				game_sel = game_sel + 14;
-				if(mode_list==0)
-					{
-						if(game_sel>=max_menu_list) 
-							game_sel=max_menu_list-1;
-					}
-				else
-					{
-						if(game_sel>=max_menu_homebrew_list) 
-							game_sel=max_menu_homebrew_list-1;
-					}
+				if(game_sel>=*max_list)
+					game_sel=*max_list-1;
 			}
 
 		} else right_count++;
@@ -2094,10 +2080,7 @@ skip_find_device:
 		  left_count=0;
 			if(game_sel == 0)
 			{
-				if(mode_list==0)
-					game_sel=max_menu_list-1;
-				else
-					game_sel=max_menu_homebrew_list-1;
+				game_sel=*max_list-1;
 			}
 			else
 			{
@@ -2123,7 +2106,16 @@ skip_find_device:
 	 
 	{
 		game_sel=0;
-		mode_list^=1;
+		if (mode_list==GAME)
+		{
+			mode_list = HOMEBREW;
+			max_list=&max_menu_homebrew_list;
+		}
+		else
+		{
+			mode_list = GAME;
+			max_list=&max_menu_list;
+		}
 		old_fi=-1;
 		counter_png=0;
 	}
@@ -2165,7 +2157,7 @@ skip_find_device:
 		
 	}
 
-	if ((new_pad & BUTTON_R1) && game_sel>=0 && max_menu_list>0 && mode_list==0){
+	if ((new_pad & BUTTON_R1) && game_sel>=0 && max_menu_list>0 && mode_list==GAME){
 
 		time_start= time(NULL);
 			
@@ -2222,7 +2214,7 @@ skip_find_device:
  
 // delete from devices	
 
-	if ( (new_pad & BUTTON_SQUARE) && game_sel>=0 && max_menu_list>0 && mode_list==0 && (!(menu_list[game_sel].flags & 2048))){
+	if ( (new_pad & BUTTON_SQUARE) && game_sel>=0 && max_menu_list>0 && mode_list==GAME && (!(menu_list[game_sel].flags & 2048))){
 		int n;
 
 			for(n=0;n<11;n++){
@@ -2299,12 +2291,12 @@ skip_find_device:
 			}
 		}
 
-	if ((new_pad & BUTTON_CIRCLE) && mode_list==1)
+	if ((new_pad & BUTTON_CIRCLE) && mode_list==HOMEBREW)
 		{
 		if(ftp_flags & 2) ftp_off(); else ftp_on();
 		}
 
-	if ((new_pad & BUTTON_SQUARE) && mode_list==1)
+	if ((new_pad & BUTTON_SQUARE) && mode_list==HOMEBREW)
 		{
 		// reset to update datas
 		old_fi=-1;
@@ -2314,7 +2306,7 @@ skip_find_device:
 		}
 // copy from devices
 
-	if ((new_pad & BUTTON_CIRCLE) && game_sel>=0 && max_menu_list>0 && mode_list==0)
+	if ((new_pad & BUTTON_CIRCLE) && game_sel>=0 && max_menu_list>0 && mode_list==GAME)
 		{
 		if(menu_list[game_sel].flags & 2048) goto copy_from_bluray;
 
@@ -2539,7 +2531,7 @@ skip_find_device:
 
 // copy from bluray
 
-	    if ( (new_pad & BUTTON_SELECT) & ((fdevices>>11) & 1) && mode_list==0)
+	    if ( (new_pad & BUTTON_SELECT) & ((fdevices>>11) & 1) && mode_list==GAME)
 		{
 copy_from_bluray:
 
@@ -2724,7 +2716,7 @@ copy_from_bluray:
 		}
 
 
-	if (new_pad & BUTTON_CROSS && game_sel>=0 && (((mode_list==0) && max_menu_list>0) || ((mode_list==1) && max_menu_homebrew_list>0)) ) {
+	if (new_pad & BUTTON_CROSS && game_sel>=0 && *max_list>0 ) {
 		
 		if(menu_list[game_sel].flags & 2048)
 			{
@@ -2734,7 +2726,7 @@ copy_from_bluray:
 			exit(0);
 			}
 
-		if(mode_list==1)	
+		if(mode_list==HOMEBREW)	
 			{
 			int prio = 1001;
 		    uint64_t flags = SYS_PROCESS_PRIMARY_STACK_SIZE_64K;
@@ -2806,7 +2798,7 @@ skip_1:
 		
 		if(!no_video)
 		{
-			if(game_sel>=0 && (((mode_list==0) && max_menu_list>0) || ((mode_list==1) && max_menu_homebrew_list>0)) && png_w!=0 && png_h!=0)
+			if(game_sel>=0 && *max_list>0 && png_w!=0 && png_h!=0)
 				{
 				
 				set_texture( text_bmp, DISPLAY_WIDTH, DISPLAY_HEIGHT);
@@ -2842,7 +2834,7 @@ skip_1:
 			// square for titles
 			draw_square(-0.9f, 0.9f, 2.0f-0.73f, 2.0-0.50f, -0.1f, 0x002030ff);
 
-			if(mode_list==0)
+			if(mode_list==GAME)
 				{
 	
 				if(game_sel>=0 && max_menu_list>0)
@@ -2857,7 +2849,7 @@ skip_1:
 				}
 		
 
-			if(mode_list==0)
+			if(mode_list==GAME)
 				draw_device_list(fdevices | ((game_sel>=0 && max_menu_list>0) ? (menu_list[game_sel].flags<<16) : 0));
 			else
 				draw_device_list(fdevices | ((game_sel>=0 && max_menu_homebrew_list>0) 
@@ -2870,7 +2862,7 @@ skip_1:
 		flip();
 		
 	}
-	if(mode_list==0)
+	if(mode_list==GAME)
 		syscall36( (char *) "/dev_bdvd"); // restore bluray
 	else
 		syscall36( (char *) "/dev_usb000"); // restore
