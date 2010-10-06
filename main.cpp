@@ -477,13 +477,12 @@ void syscall36( char * path)
 
 void pokeq( uint64_t addr, uint64_t val) /*patch for controller*/
 { 
-system_call_2(7, addr, val); 
+	system_call_2(7, addr, val); 
 } 
 uint64_t peekq(uint64_t addr)
 {
-	uint64_t out;
-	system_call_2(6,addr,out);
-	return out;
+	system_call_1(6,addr);
+	return_to_user_prog(uint64_t);
 }
 
 
