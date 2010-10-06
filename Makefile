@@ -36,5 +36,5 @@ $(FPSHADER_PPU_OBJS): $(OBJS_DIR)/%.ppu.o : %.fpo
 gen_pkg:: $(PPU_TARGET)
 	$(PPU_STRIP) -s $< -o $(OBJS_DIR)/$(PPU_TARGET)
 	$(MAKE_FSELF) $(OBJS_DIR)/$(PPU_TARGET) EBOOT.BIN				# to use in /app_home/PS3_GAME
-	$(MAKE_FSELF_NPDRM) $(OBJS_DIR)/$(PPU_TARGET) PS3_GAME/USRDIR/EBOOT.BIN
-	$(MAKE_PACKAGE_NPDRM) openmanager.conf PS3_GAME/				# to install pkg
+	$(MAKE_FSELF_NPDRM) $(OBJS_DIR)/$(PPU_TARGET) OpenManager/USRDIR/EBOOT.BIN
+	$(MAKE_PACKAGE_NPDRM) openmanager.conf OpenManager/				# to install pkg
