@@ -10,10 +10,6 @@ typedef unsigned char u8;
 #define CONSOLE_WIDTH		(76+16)
 #define CONSOLE_HEIGHT		(31)
 
-#define DISPLAY_WIDTH  512	
-#define DISPLAY_HEIGHT 512
-
-
 typedef struct
 {
 	unsigned flags;

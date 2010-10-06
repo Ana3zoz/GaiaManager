@@ -40,8 +40,8 @@
 #include "config.h"
 
 enum BmModes {
-		GAME = 0,
-		HOMEBREW = 1
+	GAME = 0,
+	HOMEBREW = 1
 };
 
 
@@ -393,7 +393,7 @@ int load_png_texture(u8 *data, char *name)
 
 	ret_png= ret= cellPngDecCreate(&mHandle, &InParam, &OutParam);
 	
-	memset(data, 0xff, (DISPLAY_WIDTH * DISPLAY_HEIGHT * 4));
+	memset(data, 0xff, (TEXT_WIDTH * TEXT_HEIGHT * 4));
 
 	png_w= png_h= 0;
 
@@ -433,7 +433,7 @@ int load_png_texture(u8 *data, char *name)
 
 			if(ret == CELL_OK)
 				{
-					dCtrlParam.outputBytesPerLine = DISPLAY_WIDTH* 4;  
+					dCtrlParam.outputBytesPerLine = TEXT_WIDTH* 4;  
 					ret = cellPngDecDecodeData(mHandle, sHandle, data, &dCtrlParam, &dOutInfo);
 					sys_timer_usleep(300);
 
@@ -459,7 +459,7 @@ int load_png_texture(u8 *data, char *name)
 		int n,m,l;
 		u32 *p=(u32 *) data;
 
-		memset(data, 0x0, (DISPLAY_WIDTH * DISPLAY_HEIGHT * 4));
+		memset(data, 0x0, (TEXT_WIDTH * TEXT_HEIGHT * 4));
 
 		l=0;
 		for(n=0;n<64;n++)
@@ -1725,7 +1725,7 @@ int main(int argc, char **argv)
 	uint64_t memvalnew = 0xE92296887C0802A6ULL; 
 
 	
-    u32 frame_buf_size = DISPLAY_WIDTH * DISPLAY_HEIGHT * 4;
+    u32 frame_buf_size = TEXT_WIDTH * TEXT_HEIGHT * 4;
 
 	frame_buf_size = ( frame_buf_size + 0xfffff ) & ( ~0xfffff );
 	text_bmp = (u8 *) memalign(0x100000, frame_buf_size);
@@ -2801,7 +2801,7 @@ skip_1:
 			if(game_sel>=0 && *max_list>0 && png_w!=0 && png_h!=0)
 				{
 				
-				set_texture( text_bmp, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+				set_texture( text_bmp, TEXT_WIDTH, TEXT_HEIGHT);
 
 				setRenderTexture();
 
@@ -2811,7 +2811,7 @@ skip_1:
 			else
 				{
 
-				set_texture( text_bmp, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+				set_texture( text_bmp, TEXT_WIDTH, TEXT_HEIGHT);
 
 				setRenderTexture();
 

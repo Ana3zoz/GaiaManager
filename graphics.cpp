@@ -311,7 +311,7 @@ int initDisplay(void)
 	ret = cellGcmAddressToOffset(depth_base_addr, &depth_offset);
 	if(ret != CELL_OK) return -1;
 
-	text_create( 512, 512 );
+	text_create( TEXT_WIDTH, TEXT_HEIGHT );
 
 	return 0;
 }
@@ -704,12 +704,14 @@ void draw_list( t_menu_list *menu, int menu_size, int selected )
 		
 		if(i<menu_size)
 			{
-			utf8_to_ansi(menu[i].title, ansi, 37);
-			ansi[37]=0;
+			utf8_to_ansi(menu[i].title, ansi, 40);
+
 #ifdef BM_SHOW_LIST_NUMBERS
 			snprintf(str, sizeof(str), "%i) %s", i+1, ansi);
+			ansi[37]=0;
 #else
 			strcpy(str, ansi);
+			ansi[40]=0;
 #endif
 			grey=(menu[i].title[0]=='_');
 			}
@@ -890,35 +892,35 @@ void put_texture_vertex(float x, float y, float z, float tx, float ty)
 void display_png(int x, int y, int width, int height, int tx, int ty)
 {
 
-	vertex_text[vert_texture_indx].x= ((float) ((x)*2))/((float) 1280)-1.0f;
-	vertex_text[vert_texture_indx].y= ((float) ((y)*-2))/((float) 720)+1.0f;
+	vertex_text[vert_texture_indx].x= ((float) ((x)*2))/((float) DISPLAY_WIDTH)-1.0f;
+	vertex_text[vert_texture_indx].y= ((float) ((y)*-2))/((float) DISPLAY_HEIGHT)+1.0f;
 	vertex_text[vert_texture_indx].z= 0.0f;
 	vertex_text[vert_texture_indx].tx= 0.0f;
 	vertex_text[vert_texture_indx].ty= 0.0f;
 
 	vert_texture_indx++;
 
-	vertex_text[vert_texture_indx].x= ((float) ((x+width)*2))/((float) 1280)-1.0f;
-	vertex_text[vert_texture_indx].y= ((float) ((y)*-2))/((float) 720)+1.0f;
+	vertex_text[vert_texture_indx].x= ((float) ((x+width)*2))/((float) DISPLAY_WIDTH)-1.0f;
+	vertex_text[vert_texture_indx].y= ((float) ((y)*-2))/((float) DISPLAY_HEIGHT)+1.0f;
 	vertex_text[vert_texture_indx].z= 0.0f;
-	vertex_text[vert_texture_indx].tx= ((float) tx)/512.0f;
+	vertex_text[vert_texture_indx].tx= ((float) tx)/(float) TEXT_WIDTH;
 	vertex_text[vert_texture_indx].ty= 0.0f;
 
 	vert_texture_indx++;
 
-	vertex_text[vert_texture_indx].x= ((float) ((x)*2))/((float) 1280)-1.0f;
-	vertex_text[vert_texture_indx].y= ((float) ((y+height)*-2))/((float) 720)+1.0f;
+	vertex_text[vert_texture_indx].x= ((float) ((x)*2))/((float) DISPLAY_WIDTH)-1.0f;
+	vertex_text[vert_texture_indx].y= ((float) ((y+height)*-2))/((float) DISPLAY_HEIGHT)+1.0f;
 	vertex_text[vert_texture_indx].z= 0.0f;
 	vertex_text[vert_texture_indx].tx= 0.0f;
-	vertex_text[vert_texture_indx].ty= ((float) ty)/512.0f;
+	vertex_text[vert_texture_indx].ty= ((float) ty)/(float) TEXT_HEIGHT;
 
 	vert_texture_indx++;
 
-	vertex_text[vert_texture_indx].x= ((float) ((x+width)*2))/((float) 1280)-1.0f;
-	vertex_text[vert_texture_indx].y= ((float) ((y+height)*-2))/((float) 720)+1.0f;
+	vertex_text[vert_texture_indx].x= ((float) ((x+width)*2))/((float) DISPLAY_WIDTH)-1.0f;
+	vertex_text[vert_texture_indx].y= ((float) ((y+height)*-2))/((float) DISPLAY_HEIGHT)+1.0f;
 	vertex_text[vert_texture_indx].z= 0.0f;
-	vertex_text[vert_texture_indx].tx= ((float) tx)/512.0f;
-	vertex_text[vert_texture_indx].ty=((float) ty)/512.0f;
+	vertex_text[vert_texture_indx].tx= ((float) tx)/(float) TEXT_WIDTH;
+	vertex_text[vert_texture_indx].ty=((float) ty)/(float) TEXT_HEIGHT;
 
 	vert_texture_indx++;
 
