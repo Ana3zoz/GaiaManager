@@ -4,7 +4,6 @@ include $(CELL_MK_DIR)/sdk.makedef.mk
 PPU_SRCS = main.cpp graphics.cpp icon.cpp syscall8.c $(VPSHADER_PPU_OBJS) $(FPSHADER_PPU_OBJS)
 PPU_TARGET = open_manager.elf
 
-all : EBOOT.BIN $(PKG_TARGET)
 PPU_INCDIRS += -I$(CELL_SDK)/target/ppu/include/sysutil
 PPU_CFLAGS  += -g
 
@@ -27,6 +26,8 @@ include $(CELL_MK_DIR)/sdk.target.mk
 
 PPU_OBJS += $(VPSHADER_PPU_OBJS) $(FPSHADER_PPU_OBJS)
 
+all : EBOOT.BIN $(PKG_TARGET)
+
 $(VPSHADER_PPU_OBJS): $(OBJS_DIR)/%.ppu.o : %.vpo
 	@mkdir -p $(dir $(@))
 	$(PPU_OBJCOPY)  -I binary -O elf64-powerpc-celloslv2 -B powerpc $< $@
@@ -36,9 +37,11 @@ $(FPSHADER_PPU_OBJS): $(OBJS_DIR)/%.ppu.o : %.fpo
 	$(PPU_OBJCOPY)  -I binary -O elf64-powerpc-celloslv2 -B powerpc $< $@
 
 $(OBJS_DIR)/$(PPU_TARGET): $(PPU_TARGET)
+	@mkdir -p $(dir $(@))
 	$(PPU_STRIP) -s $< -o $@
 
 PS3_GAME/USRDIR/EBOOT.BIN: $(OBJS_DIR)/$(PPU_TARGET)
+	@mkdir -p $(dir $(@))
 	$(MAKE_FSELF_NPDRM) $< $@
 
 $(PKG_TARGET): openmanager.conf PS3_GAME/USRDIR/EBOOT.BIN
